@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Stage Art - Profile Generator</title>
+    <meta name="description" content="Create beautiful, kid-friendly profile pictures for Creative Stage Art - A preschool & afterschool program">
+    <meta name="keywords" content="Creative Stage Art, profile picture, logo, preschool, afterschool, kids, education">
+    <meta name="author" content="Creative Stage Art">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Creative Stage Art - Profile Generator">
+    <meta property="og:description" content="Create beautiful, kid-friendly profile pictures with rainbow and lightbulb designs">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://daiyongg-kim.github.io/creative-stage-logo">
+    <meta property="og:image" content="https://daiyongg-kim.github.io/creative-stage-logo/assets/preview.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="profile-container">
+        <header class="header">
+            <h1 class="main-title">Creative Stage Art</h1>
+            <p class="subtitle">Profile Picture Generator</p>
+        </header>
+
+        <div class="profile-versions">
+            <div class="profile-option">
+                <div class="version-label">원형 프로필 (SNS용)</div>
+                <div class="profile-circle" id="circle-profile">
+                    <div class="decorative-stars">✨</div>
+                    <div class="inner-content">
+                        <div class="rainbow">
+                            <div class="rainbow-middle"></div>
+                            <div class="lightbulb"></div>
+                        </div>
+                        <div class="brand-name">Creative Stage</div>
+                        <div class="tagline">ART • LEARN • GROW</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-option">
+                <div class="version-label">사각형 프로필 (비즈니스용)</div>
+                <div class="square-version" id="square-profile">
+                    <div class="decorative-stars">✨</div>
+                    <div class="inner-content">
+                        <div class="rainbow">
+                            <div class="rainbow-middle"></div>
+                            <div class="lightbulb"></div>
+                        </div>
+                        <div class="brand-name">Creative Stage</div>
+                        <div class="tagline">PRESCHOOL • AFTERSCHOOL</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <div class="download-buttons">
+                <button class="download-btn" onclick="downloadProfile('circle')">
+                    📱 원형 다운로드
+                </button>
+                <button class="download-btn" onclick="downloadProfile('square')">
+                    💼 사각형 다운로드
+                </button>
+            </div>
+            
+            <div class="usage-info">
+                <div class="info-card">
+                    <h3>🎯 사용 용도</h3>
+                    <div class="usage-list">
+                        <div><strong>원형:</strong> Instagram, Facebook, Twitter 프로필</div>
+                        <div><strong>사각형:</strong> LinkedIn, 비즈니스 카드, 웹사이트</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Made with 💖 for Creative Stage Art</p>
+            <p><a href="https://github.com/daiyongg-kim/creative-stage-logo" target="_blank">GitHub Repository</a></p>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
