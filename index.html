@@ -26,14 +26,19 @@
 </head>
 <body>
     <div class="profile-container">
+        <div class="language-switcher">
+            <button class="lang-btn active" data-lang="ko">한국어</button>
+            <button class="lang-btn" data-lang="en">English</button>
+        </div>
+        
         <header class="header">
-            <h1 class="main-title">Creative Stage Art</h1>
-            <p class="subtitle">Profile Picture Generator</p>
+            <h1 class="main-title" data-ko="Creative Stage Art" data-en="Creative Stage Art">Creative Stage Art</h1>
+            <p class="subtitle" data-ko="프로필 사진 생성기" data-en="Profile Picture Generator">프로필 사진 생성기</p>
         </header>
 
         <div class="profile-versions">
             <div class="profile-option">
-                <div class="version-label">원형 프로필 (SNS용)</div>
+                <div class="version-label" data-ko="원형 프로필 (SNS용)" data-en="Circle Profile (for SNS)">원형 프로필 (SNS용)</div>
                 <div class="profile-circle" id="circle-profile">
                     <div class="decorative-stars">✨</div>
                     <div class="inner-content">
@@ -48,7 +53,7 @@
             </div>
 
             <div class="profile-option">
-                <div class="version-label">사각형 프로필 (비즈니스용)</div>
+                <div class="version-label" data-ko="사각형 프로필 (비즈니스용)" data-en="Square Profile (for Business)">사각형 프로필 (비즈니스용)</div>
                 <div class="square-version" id="square-profile">
                     <div class="decorative-stars">✨</div>
                     <div class="inner-content">
@@ -65,28 +70,28 @@
 
         <div class="download-section">
             <div class="download-buttons">
-                <button class="download-btn" onclick="downloadProfile('circle')">
+                <button class="download-btn" onclick="downloadProfile('circle')" data-ko="📱 원형 다운로드" data-en="📱 Download Circle">
                     📱 원형 다운로드
                 </button>
-                <button class="download-btn" onclick="downloadProfile('square')">
+                <button class="download-btn" onclick="downloadProfile('square')" data-ko="💼 사각형 다운로드" data-en="💼 Download Square">
                     💼 사각형 다운로드
                 </button>
             </div>
             
             <div class="usage-info">
                 <div class="info-card">
-                    <h3>🎯 사용 용도</h3>
+                    <h3 data-ko="🎯 사용 용도" data-en="🎯 Usage Guide">🎯 사용 용도</h3>
                     <div class="usage-list">
-                        <div><strong>원형:</strong> Instagram, Facebook, Twitter 프로필</div>
-                        <div><strong>사각형:</strong> LinkedIn, 비즈니스 카드, 웹사이트</div>
+                        <div data-ko="원형: Instagram, Facebook, Twitter 프로필" data-en="Circle: Instagram, Facebook, Twitter profiles"><strong data-ko="원형:" data-en="Circle:">원형:</strong> Instagram, Facebook, Twitter <span data-ko="프로필" data-en="profiles">프로필</span></div>
+                        <div data-ko="사각형: LinkedIn, 비즈니스 카드, 웹사이트" data-en="Square: LinkedIn, business cards, websites"><strong data-ko="사각형:" data-en="Square:">사각형:</strong> LinkedIn, <span data-ko="비즈니스 카드, 웹사이트" data-en="business cards, websites">비즈니스 카드, 웹사이트</span></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <footer class="footer">
-            <p>Made with 💖 for Creative Stage Art</p>
-            <p><a href="https://github.com/daiyongg-kim/creative-stage-logo" target="_blank">GitHub Repository</a></p>
+            <p data-ko="Creative Stage Art를 위해 💖으로 만들어졌습니다" data-en="Made with 💖 for Creative Stage Art">Creative Stage Art를 위해 💖으로 만들어졌습니다</p>
+            <p><a href="https://github.com/daiyongg-kim/creative-stage-logo" target="_blank" data-ko="GitHub 저장소" data-en="GitHub Repository">GitHub 저장소</a></p>
         </footer>
     </div>
 

@@ -286,3 +286,142 @@ function showNotification(notification) {
 // Dismiss notification
 function dismissNotification(notification) {
     notification.style.animation = 'slideOut 0.5s ease-out';
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.remove();
+        }
+    }, 500);
+}
+
+// Language switching functionality
+let currentLanguage = 'ko'; // Default language
+
+// Language text data
+const translations = {
+    ko: {
+        mainTitle: 'Creative Stage Art',
+        subtitle: '프로필 사진 생성기',
+        circleLabel: '원형 프로필 (SNS용)',
+        squareLabel: '사각형 프로필 (비즈니스용)',
+        downloadCircle: '📱 원형 다운로드',
+        downloadSquare: '💼 사각형 다운로드',
+        usageTitle: '🎯 사용 용도',
+        usageCircle: '원형: Instagram, Facebook, Twitter 프로필',
+        usageSquare: '사각형: LinkedIn, 비즈니스 카드, 웹사이트',
+        footerText: 'Creative Stage Art를 위해 💖으로 만들어졌습니다',
+        githubText: 'GitHub 저장소',
+        downloading: '다운로드 중... 🎨',
+        downloadSuccess: '프로필이 성공적으로 다운로드되었습니다!',
+        downloadError: '다운로드 실패. 대안 방법을 시도해보세요.',
+        manualTitle: '📸 수동 다운로드 방법',
+        manualStep1: '프로필을 마우스 우클릭',
+        manualStep2: '"이미지를 다른 이름으로 저장" 클릭',
+        manualStep3: '원하는 위치에 저장',
+        manualTip: '💡 또는 스크린샷을 찍어서 이미지 편집 프로그램에서 잘라내기'
+    },
+    en: {
+        mainTitle: 'Creative Stage Art',
+        subtitle: 'Profile Picture Generator',
+        circleLabel: 'Circle Profile (for SNS)',
+        squareLabel: 'Square Profile (for Business)',
+        downloadCircle: '📱 Download Circle',
+        downloadSquare: '💼 Download Square',
+        usageTitle: '🎯 Usage Guide',
+        usageCircle: 'Circle: Instagram, Facebook, Twitter profiles',
+        usageSquare: 'Square: LinkedIn, business cards, websites',
+        footerText: 'Made with 💖 for Creative Stage Art',
+        githubText: 'GitHub Repository',
+        downloading: 'Downloading... 🎨',
+        downloadSuccess: 'Profile downloaded successfully!',
+        downloadError: 'Download failed. Please try alternative method.',
+        manualTitle: '📸 Manual Download Guide',
+        manualStep1: 'Right-click on the profile',
+        manualStep2: 'Click "Save image as"',
+        manualStep3: 'Save to desired location',
+        manualTip: '💡 Or take a screenshot and crop using image editor'
+    }
+};
+
+// Switch language function
+function switchLanguage(lang) {
+    currentLanguage = lang;
+    
+    // Update button states
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+    
+    // Update all text elements
+    document.querySelectorAll('[data-ko][data-en]').forEach(element => {
+        const text = element.getAttribute(`data-${lang}`);
+        if (text) {
+            if (element.tagName === 'STRONG') {
+                element.textContent = text;
+            } else {
+                element.innerHTML = text;
+            }
+        }
+    });
+    
+    // Update download buttons text content
+    const circleBtn = document.querySelector('[onclick="downloadProfile(\'circle\')"]');
+    const squareBtn = document.querySelector('[onclick="downloadProfile(\'square\')"]');
+    
+    if (circleBtn && !circleBtn.disabled) {
+        circleBtn.innerHTML = translations[lang].downloadCircle;
+    }
+    if (squareBtn && !squareBtn.disabled) {
+        squareBtn.innerHTML = translations[lang].downloadSquare;
+    }
+    
+    // Save language preference
+    localStorage.setItem('preferredLanguage', lang);
+}
+
+// Initialize language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Get saved language preference or use browser language
+    const savedLang = localStorage.getItem('preferredLanguage');
+    const browserLang = navigator.language || navigator.userLanguage;
+    const defaultLang = savedLang || (browserLang.startsWith('ko') ? 'ko' : 'en');
+    
+    switchLanguage(defaultLang);
+    
+    // Add event listeners to language buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchLanguage(btn.dataset.lang);
+        });
+    });
+});
+
+// Update loading state function to support multiple languages
+function showLoadingState(type) {
+    const buttons = document.querySelectorAll('.download-btn');
+    buttons.forEach(button => {
+        const buttonType = button.textContent.includes('원형') || button.textContent.includes('Circle') ? 'circle' : 'square';
+        if (buttonType === type) {
+            button.dataset.originalText = button.innerHTML;
+            button.innerHTML = translations[currentLanguage].downloading;
+            button.disabled = true;
+        }
+    });
+}
+
+// Update success message function
+function showSuccessMessage(type) {
+    const message = createNotification(
+        `🎉 ${translations[currentLanguage].downloadSuccess}`,
+        'success'
+    );
+    showNotification(message);
+}
+
+// Update error message function  
+function showErrorMessage(errorText) {
+    const message = createNotification(
+        `❌ ${translations[currentLanguage].downloadError}`,
+        'error'
+    );
+    showNotification(message);
+}
