@@ -3,125 +3,159 @@
  * JavaScript functionality for downloading profile images
  */
 
-// Alternative download method with wrapper container (IMPROVED)
-async function downloadProfileAlternative(type) {
-    const originalElement = type === 'circle' 
-        ? document.querySelector('.profile-circle') 
-        : document.querySelector('.square-version');
+// Create SVG version of profile for download
+function createSVGProfile(type) {
+    const size = 400;
+    const isCircle = type === 'circle';
     
-    if (!originalElement) {
-        showErrorMessage('Profile element not found');
-        return;
-    }
-    
-    // Create wrapper container with generous padding
-    const wrapper = document.createElement('div');
-    wrapper.style.cssText = `
-        padding: 50px;
-        background: transparent;
-        display: inline-block;
-        position: fixed;
-        top: -9999px;
-        left: -9999px;
-        z-index: -1;
+    // SVG template
+    const svgTemplate = `
+        <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#ff6b9d"/>
+                    <stop offset="16.66%" stop-color="#4ecdc4"/>
+                    <stop offset="33.33%" stop-color="#45b7d1"/>
+                    <stop offset="50%" stop-color="#f9ca24"/>
+                    <stop offset="66.66%" stop-color="#f0932b"/>
+                    <stop offset="83.33%" stop-color="#eb4d4b"/>
+                    <stop offset="100%" stop-color="#6c5ce7"/>
+                </linearGradient>
+                <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ffefba"/>
+                    <stop offset="50%" stop-color="#ffffff"/>
+                    <stop offset="100%" stop-color="#a8e6cf"/>
+                </linearGradient>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                    <feMerge> 
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+            
+            <!-- Background -->
+            <rect width="${size}" height="${size}" fill="url(#bg-gradient)" ${isCircle ? `rx="${size/2}"` : 'rx="20"'}/>
+            
+            <!-- Container -->
+            <g transform="translate(${size/2}, ${size/2})">
+                <!-- Rainbow -->
+                <path d="M -60 20 A 60 60 0 0 1 60 20" stroke="url(#rainbow)" stroke-width="12" fill="none" stroke-linecap="round"/>
+                <path d="M -45 20 A 45 45 0 0 1 45 20" stroke="url(#bg-gradient)" stroke-width="8" fill="none"/>
+                
+                <!-- Lightbulb -->
+                <g transform="translate(0, -10)">
+                    <ellipse cx="0" cy="-15" rx="18" ry="22" fill="#ffd700" filter="url(#glow)"/>
+                    <rect x="-12" y="7" width="24" height="8" rx="3" fill="#e6c200"/>
+                    <rect x="-10" y="12" width="20" height="3" rx="2" fill="#ccac00"/>
+                    <!-- Light rays -->
+                    <g stroke="#ffd700" stroke-width="2" stroke-linecap="round" opacity="0.7">
+                        <line x1="-35" y1="-15" x2="-25" y2="-15"/>
+                        <line x1="25" y1="-15" x2="35" y2="-15"/>
+                        <line x1="-25" y1="-35" x2="-20" y2="-28"/>
+                        <line x1="20" y1="-28" x2="25" y2="-35"/>
+                        <line x1="0" y1="-45" x2="0" y2="-38"/>
+                    </g>
+                </g>
+                
+                <!-- Brand Name -->
+                <text x="0" y="60" text-anchor="middle" font-family="'Comic Neue', cursive" font-size="32" font-weight="900" fill="url(#rainbow)">
+                    Creative Stage
+                </text>
+                
+                <!-- Tagline -->
+                <text x="0" y="85" text-anchor="middle" font-family="'Comic Neue', cursive" font-size="14" font-weight="600" fill="#666">
+                    ${isCircle ? 'ART • LEARN • GROW' : 'PRESCHOOL • AFTERSCHOOL'}
+                </text>
+                
+                <!-- Stars decoration -->
+                <text x="-80" y="-60" font-size="20" fill="#ffd700">✨</text>
+                <text x="80" y="-40" font-size="16" fill="#ff6b9d">✨</text>
+                <text x="-70" y="80" font-size="18" fill="#4ecdc4">✨</text>
+                <text x="75" y="75" font-size="14" fill="#a8e6cf">✨</text>
+            </g>
+        </svg>
     `;
     
-    // Clone the element with all styles
-    const clonedElement = originalElement.cloneNode(true);
-    wrapper.appendChild(clonedElement);
-    document.body.appendChild(wrapper);
-    
-    try {
-        const canvas = await html2canvas(wrapper, {
-            backgroundColor: null,
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            imageTimeout: 15000
-        });
-        
-        // Convert and download
-        const link = document.createElement('a');
-        link.download = `creative-stage-${type}-profile-${getCurrentTimestamp()}.png`;
-        link.href = canvas.toDataURL('image/png', 1.0);
-        
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        showSuccessMessage(type);
-        trackDownload(type);
-        
-    } catch (error) {
-        console.error('Alternative download error:', error);
-        throw error;
-    } finally {
-        // Clean up
-        if (wrapper.parentNode) {
-            document.body.removeChild(wrapper);
-        }
-    }
+    return svgTemplate;
 }
 
-// Main download function with multiple fallbacks
+// Convert SVG to downloadable image
 async function downloadProfile(type) {
-    const element = type === 'circle' 
-        ? document.querySelector('.profile-circle') 
-        : document.querySelector('.square-version');
-    
-    if (!element) {
-        showErrorMessage('Profile element not found');
-        return;
-    }
-    
-    // Show loading state
     showLoadingState(type);
     
     try {
-        // Try alternative method first (better for capturing full element)
-        await downloadProfileAlternative(type);
-        return;
+        // Create SVG
+        const svgString = createSVGProfile(type);
+        const svgBlob = new Blob([svgString], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(svgBlob);
         
-    } catch (primaryError) {
-        console.log('Primary method failed, trying fallback...');
-        
+        // Try to create PNG using canvas method
         try {
-            // Fallback method with expanded capture area
-            const rect = element.getBoundingClientRect();
-            const canvas = await html2canvas(document.body, {
-                x: rect.left - 50,
-                y: rect.top - 50, 
-                width: rect.width + 100,
-                height: rect.height + 100,
-                backgroundColor: null,
-                scale: 2,
-                useCORS: true,
-                allowTaint: true,
-                logging: false,
-                imageTimeout: 15000
-            });
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = 800;  // High resolution
+                canvas.height = 800;
+                
+                // White background
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw SVG
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Download PNG
+                canvas.toBlob((blob) => {
+                    const link = document.createElement('a');
+                    link.download = `creative-stage-${type}-profile-${getCurrentTimestamp()}.png`;
+                    link.href = URL.createObjectURL(blob);
+                    link.click();
+                    
+                    // Cleanup
+                    URL.revokeObjectURL(url);
+                    URL.revokeObjectURL(link.href);
+                    
+                    showSuccessMessage(type);
+                    trackDownload(type);
+                }, 'image/png', 1.0);
+            };
             
-            // Convert and download
-            const link = document.createElement('a');
-            link.download = `creative-stage-${type}-profile-${getCurrentTimestamp()}.png`;
-            link.href = canvas.toDataURL('image/png', 1.0);
+            img.onerror = () => {
+                // Fallback: download SVG directly
+                downloadSVGDirect(svgBlob, type);
+            };
             
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            img.src = url;
             
-            showSuccessMessage(type);
-            trackDownload(type);
-            
-        } catch (fallbackError) {
-            console.error('Both download methods failed:', fallbackError);
-            showErrorMessage('다운로드 실패. 대안 방법을 시도해보세요.');
-            showManualDownloadGuide(type);
+        } catch (canvasError) {
+            console.log('Canvas method failed, downloading SVG:', canvasError);
+            downloadSVGDirect(svgBlob, type);
         }
+        
+    } catch (error) {
+        console.error('Download failed:', error);
+        showErrorMessage('Download failed');
+        showManualDownloadGuide(type);
     } finally {
         resetButtonStates();
     }
+}
+
+// Fallback: Download SVG directly
+function downloadSVGDirect(svgBlob, type) {
+    const link = document.createElement('a');
+    link.download = `creative-stage-${type}-profile-${getCurrentTimestamp()}.svg`;
+    link.href = URL.createObjectURL(svgBlob);
+    link.click();
+    
+    URL.revokeObjectURL(link.href);
+    
+    showSuccessMessage(type);
+    trackDownload(type);
 }
 
 // Show loading state on buttons
