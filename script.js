@@ -141,7 +141,7 @@ function resetButtonStates() {
     const buttons = document.querySelectorAll('.download-btn');
     buttons.forEach(button => {
         if (button.dataset.originalText) {
-            button.textContent = button.dataset.originalText;
+            button.innerHTML = button.dataset.originalText;
             delete button.dataset.originalText;
             button.disabled = false;
         }
@@ -166,15 +166,20 @@ function showManualDownloadGuide(type) {
         font-family: 'Comic Neue', cursive, sans-serif;
     `;
     
+    const lang = currentLanguage;
+    const typeLabel = type === 'circle' ? 
+        (lang === 'ko' ? '원형' : 'circle') : 
+        (lang === 'ko' ? '사각형' : 'square');
+    
     guide.innerHTML = `
-        <h3 style="color: #8e44ad; margin-bottom: 20px; font-size: 24px;">📸 수동 다운로드 방법</h3>
+        <h3 style="color: #8e44ad; margin-bottom: 20px; font-size: 24px;">${translations[lang].manualTitle}</h3>
         <div style="margin-bottom: 20px; font-size: 16px; line-height: 1.6;">
-            <p><strong>1단계:</strong> ${type === 'circle' ? '원형' : '사각형'} 프로필을 <strong>마우스 우클릭</strong></p>
-            <p><strong>2단계:</strong> "이미지를 다른 이름으로 저장" 클릭</p>
-            <p><strong>3단계:</strong> 원하는 위치에 저장</p>
+            <p><strong>${lang === 'ko' ? '1단계:' : 'Step 1:'}</strong> ${typeLabel} ${translations[lang].manualStep1}</p>
+            <p><strong>${lang === 'ko' ? '2단계:' : 'Step 2:'}</strong> ${translations[lang].manualStep2}</p>
+            <p><strong>${lang === 'ko' ? '3단계:' : 'Step 3:'}</strong> ${translations[lang].manualStep3}</p>
         </div>
         <div style="margin-bottom: 20px;">
-            <p style="font-size: 14px; color: #666;">💡 또는 스크린샷을 찍어서 이미지 편집 프로그램에서 잘라내기</p>
+            <p style="font-size: 14px; color: #666;">${translations[lang].manualTip}</p>
         </div>
         <button onclick="this.parentNode.remove()" style="
             background: linear-gradient(45deg, #ff6b9d, #4ecdc4);
@@ -185,7 +190,7 @@ function showManualDownloadGuide(type) {
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
-        ">확인</button>
+        ">${lang === 'ko' ? '확인' : 'OK'}</button>
     `;
     
     document.body.appendChild(guide);
@@ -424,4 +429,21 @@ function showErrorMessage(errorText) {
         'error'
     );
     showNotification(message);
+}
+
+// Get current timestamp for filename
+function getCurrentTimestamp() {
+    const now = new Date();
+    return now.getFullYear() + 
+           ('0' + (now.getMonth() + 1)).slice(-2) + 
+           ('0' + now.getDate()).slice(-2) + '_' +
+           ('0' + now.getHours()).slice(-2) + 
+           ('0' + now.getMinutes()).slice(-2) + 
+           ('0' + now.getSeconds()).slice(-2);
+}
+
+// Track download for analytics (optional)
+function trackDownload(type) {
+    console.log(`Downloaded: ${type} profile at ${new Date().toISOString()}`);
+    // Add analytics tracking here if needed
 }
